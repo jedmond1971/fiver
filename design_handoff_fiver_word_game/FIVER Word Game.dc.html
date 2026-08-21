@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"><style>
+body{margin:0;background:#eeece7;font-family:'Instrument Sans',system-ui,sans-serif}
+a{color:#2a5d8f}a:hover{color:#17181a}
+.dv-turn{padding:44px 48px 36px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 22px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 'Instrument Sans',system-ui;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11.5px/1.3 'Instrument Sans',system-ui;color:rgba(0,0,0,.55)}
+.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;padding:24px;display:flex;gap:26px;align-items:flex-start}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+.dv-next{margin:24px 0 0;font:12px/1.6 'Instrument Sans',system-ui;color:rgba(0,0,0,.5)}
+</style></helmet>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">FIVER — three takes on the board, desktop + mobile</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a" data-screen-label="1a Paper">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Paper — classic centered board, stats strip in the header, share card as a win overlay</div>
+<div class="dv-card">
+<x-import component-from-global-scope="ChromeWindow" from="./browser-window.jsx" tabs="{{ tabsA }}" url="fiver.game/daily/842" width="{{ n1160 }}" height="{{ n740 }}" hint-size="1160px,740px">
+<div style="height:100%;background:#f6f4ef;display:flex;flex-direction:column;position:relative;font-family:'Instrument Sans',system-ui">
+<div style="height:66px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid #ded8cc">
+<div style="display:flex;align-items:center;gap:14px">
+<div style="font-weight:700;font-size:21px;letter-spacing:.34em;color:#17181a">FIVER</div>
+<div style="font-size:12px;color:#8a857c;letter-spacing:.06em">NO. 842 · AUG 21</div>
+</div>
+<div style="display:flex;align-items:center;gap:22px">
+<div style="display:flex;align-items:baseline;gap:7px"><span style="font-size:19px;font-weight:600;color:#17181a">17</span><span style="font-size:11px;color:#8a857c;letter-spacing:.1em">STREAK</span></div>
+<div style="width:1px;height:22px;background:#ded8cc"></div>
+<div style="display:flex;align-items:baseline;gap:7px"><span style="font-size:19px;font-weight:600;color:#17181a">94%</span><span style="font-size:11px;color:#8a857c;letter-spacing:.1em">WINS</span></div>
+<div style="display:flex;gap:10px;margin-left:6px">
+<div style="width:34px;height:34px;border:1px solid #ded8cc;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#8a857c">?</div>
+<div style="width:34px;height:34px;border:1px solid #ded8cc;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#8a857c">▤</div>
+</div>
+</div>
+</div>
+<div style="flex:1;display:flex;align-items:center;justify-content:center">
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ a.won }}" as="row" hint-placeholder-count="6">
+<div style="display:flex;gap:8px">
+<sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+<div style="width:64px;height:64px;border-radius:4px;border:1.5px solid;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:600;letter-spacing:.02em;background:{{ cell.bg }};color:{{ cell.fg }};border-color:{{ cell.bd }}">{{ cell.ch }}</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="position:absolute;inset:0;background:rgba(23,24,26,.32);display:flex;align-items:center;justify-content:center">
+<div style="width:392px;background:#fffefb;border:1px solid #ded8cc;border-radius:14px;padding:30px 30px 26px;box-shadow:0 24px 60px rgba(23,24,26,.22);display:flex;flex-direction:column;align-items:center;gap:4px">
+<div style="font-size:11px;letter-spacing:.16em;color:#8a857c">SOLVED IN 3</div>
+<div style="font-family:'Instrument Serif',serif;font-size:38px;color:#17181a;line-height:1.1">Splendid</div>
+<div style="font-size:13px;color:#8a857c;margin-bottom:14px">Today's word was <span style="color:#4a7a5c;font-weight:600">PRISM</span></div>
+<div style="display:flex;flex-direction:column;gap:4px;padding:14px 0 18px">
+<sc-for list="{{ a.share }}" as="row" hint-placeholder-count="3">
+<div style="display:flex;gap:4px">
+<sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+<div style="width:20px;height:20px;border-radius:3px;background:{{ cell.bg }}"></div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:26px;width:100%;justify-content:center;padding-bottom:18px;border-bottom:1px solid #ece7dd">
+<div style="text-align:center"><div style="font-size:22px;font-weight:600;color:#17181a">128</div><div style="font-size:10px;letter-spacing:.09em;color:#8a857c">PLAYED</div></div>
+<div style="text-align:center"><div style="font-size:22px;font-weight:600;color:#17181a">94</div><div style="font-size:10px;letter-spacing:.09em;color:#8a857c">WIN %</div></div>
+<div style="text-align:center"><div style="font-size:22px;font-weight:600;color:#17181a">17</div><div style="font-size:10px;letter-spacing:.09em;color:#8a857c">STREAK</div></div>
+<div style="text-align:center"><div style="font-size:22px;font-weight:600;color:#17181a">31</div><div style="font-size:10px;letter-spacing:.09em;color:#8a857c">BEST</div></div>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;width:100%;padding-top:18px">
+<div style="font-size:12px;color:#8a857c">Next word in <span style="color:#17181a;font-variant-numeric:tabular-nums">07:12:44</span></div>
+<div style="background:#4a7a5c;color:#fff;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px">Share</div>
+</div>
+</div>
+</div>
+</div>
+</x-import>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+<div style="height:100%;background:#f6f4ef;display:flex;flex-direction:column;font-family:'Instrument Sans',system-ui;padding-top:54px;box-sizing:border-box">
+<div style="height:52px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid #ded8cc">
+<div style="width:30px;font-size:15px;color:#8a857c">?</div>
+<div style="font-weight:700;font-size:16px;letter-spacing:.3em;color:#17181a">FIVER</div>
+<div style="width:30px;text-align:right;font-size:13px;color:#8a857c">▤</div>
+</div>
+<div style="flex:1;display:flex;align-items:center;justify-content:center">
+<div style="display:flex;flex-direction:column;gap:6px">
+<sc-for list="{{ a.prog }}" as="row" hint-placeholder-count="6">
+<div style="display:flex;gap:6px">
+<sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+<div style="width:58px;height:58px;border-radius:4px;border:1.5px solid;display:flex;align-items:center;justify-content:center;font-size:27px;font-weight:600;background:{{ cell.bg }};color:{{ cell.fg }};border-color:{{ cell.bd }}">{{ cell.ch }}</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="flex:none;padding:10px 5px 42px;display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ a.kbProg }}" as="row" hint-placeholder-count="3">
+<div style="display:flex;gap:6px;padding:0 3px">
+<sc-for list="{{ row.keys }}" as="key" hint-placeholder-count="10">
+<div style="height:52px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;flex-basis:0;flex-grow:{{ key.f }};background:{{ key.bg }};color:{{ key.fg }}">{{ key.ch }}</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+</x-import>
+</div>
+</div>
+
+<div class="dv-opt" id="1b" data-screen-label="1b Editorial">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Editorial — serif masthead, left rail for stats and streak, share card lives in the rail</div>
+<div class="dv-card">
+<x-import component-from-global-scope="ChromeWindow" from="./browser-window.jsx" tabs="{{ tabsA }}" url="fiver.game/daily/842" width="{{ n1160 }}" height="{{ n740 }}" hint-size="1160px,740px">
+<div style="height:100%;background:#fffdf8;display:flex;font-family:'Instrument Sans',system-ui">
+<div style="width:296px;flex:none;border-right:1px solid #e6e0d4;padding:30px 26px;display:flex;flex-direction:column;gap:26px;box-sizing:border-box">
+<div>
+<div style="font-family:'Instrument Serif',serif;font-size:40px;line-height:1;color:#17181a">Fiver</div>
+<div style="font-size:11px;letter-spacing:.14em;color:#9a938a;margin-top:8px">DAILY EDITION · NO. 842</div>
+</div>
+<div style="height:1px;background:#e6e0d4"></div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12.5px;color:#6f6a62">Current streak</span><span style="font-family:'Instrument Serif',serif;font-size:24px;color:#17181a">17</span></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12.5px;color:#6f6a62">Longest streak</span><span style="font-family:'Instrument Serif',serif;font-size:24px;color:#17181a">31</span></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12.5px;color:#6f6a62">Win rate</span><span style="font-family:'Instrument Serif',serif;font-size:24px;color:#17181a">94%</span></div>
+</div>
+<div style="height:1px;background:#e6e0d4"></div>
+<div style="display:flex;flex-direction:column;gap:11px">
+<div style="font-size:11px;letter-spacing:.14em;color:#9a938a">TODAY'S RESULT</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<sc-for list="{{ b.share }}" as="row" hint-placeholder-count="3">
+<div style="display:flex;gap:4px">
+<sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+<div style="width:22px;height:22px;border-radius:2px;background:{{ cell.bg }}"></div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+<div style="font-size:12.5px;color:#6f6a62;line-height:1.5">Solved in three. The word was <span style="font-weight:600;color:#2f6b4f">PRISM</span>.</div>
+<div style="border:1px solid #17181a;color:#17181a;font-size:12.5px;font-weight:600;padding:9px 0;border-radius:2px;text-align:center;margin-top:2px">Share result</div>
+</div>
+<div style="flex:1"></div>
+<div style="font-size:12px;color:#9a938a">Next edition in <span style="color:#17181a;font-variant-numeric:tabular-nums">07:12:44</span></div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px">
+<div style="display:flex;flex-direction:column;gap:7px">
+<sc-for list="{{ b.won }}" as="row" hint-placeholder-count="6">
+<div style="display:flex;gap:7px">
+<sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+<div style="width:66px;height:66px;border:1px solid;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:34px;background:{{ cell.bg }};color:{{ cell.fg }};border-color:{{ cell.bd }}">{{ cell.ch }}</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:20px;align-items:center">
+<div style="display:flex;align-items:center;gap:7px"><div style="width:12px;height:12px;background:#2f6b4f"></div><span style="font-size:11.5px;color:#6f6a62">right place</span></div>
+<div style="display:flex;align-items:center;gap:7px"><div style="width:12px;height:12px;background:#b8862b"></div><span style="font-size:11.5px;color:#6f6a62">wrong place</span></div>
+<div style="display:flex;align-items:center;gap:7px"><div style="width:12px;height:12px;background:#b3aca1"></div><span style="font-size:11.5px;color:#6f6a62">not in word</span></div>
+</div>
+</div>
+</div>
+</x-import>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+<div style="height:100%;background:#fffdf8;display:flex;flex-direction:column;font-family:'Instrument Sans',system-ui;padding-top:54px;box-sizing:border-box">
+<div style="flex:none;padding:6px 20px 14px;border-bottom:1px solid #e6e0d4;display:flex;align-items:flex-end;justify-content:space-between">
+<div>
+<div style="font-family:'Instrument Serif',serif;font-size:30px;line-height:1;color:#17181a">Fiver</div>
+<div style="font-size:10px;letter-spacing:.13em;color:#9a938a;margin-top:5px">NO. 842 · 17 DAY STREAK</div>
+</div>
+<div style="display:flex;gap:14px;font-size:13px;color:#9a938a"><span>?</span><span>▤</span></div>
+</div>
+<div style="flex:1;display:flex;align-items:center;justify-content:center">
+<div style="display:flex;flex-direction:column;gap:6px">
+<sc-for list="{{ b.prog }}" as="row" hint-placeholder-count="6">
+<div style="display:flex;gap:6px">
+<sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+<div style="width:58px;height:58px;border:1px solid;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:30px;background:{{ cell.bg }};color:{{ cell.fg }};border-color:{{ cell.bd }}">{{ cell.ch }}</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="flex:none;padding:10px 5px 42px;display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ b.kbProg }}" as="row" hint-placeholder-count="3">
+<div style="display:flex;gap:6px;padding:0 3px">
+<sc-for list="{{ row.keys }}" as="key" hint-placeholder-count="10">
+<div style="height:52px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:500;flex-basis:0;flex-grow:{{ key.f }};background:{{ key.bg }};color:{{ key.fg }}">{{ key.ch }}</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+</x-import>
+</div>
+</div>
+
+<div class="dv-opt" id="1c" data-screen-label="1c Night">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Night — dark first, mono letterforms, oversized tiles, share card as a bottom sheet on mobile</div>
+<div class="dv-card" style="background:#0e0f12;border-color:rgba(255,255,255,.1)">
+<x-import component-from-global-scope="ChromeWindow" from="./browser-window.jsx" tabs="{{ tabsA }}" url="fiver.game/daily/842" width="{{ n1160 }}" height="{{ n740 }}" hint-size="1160px,740px">
+<div style="height:100%;background:#15161a;display:flex;flex-direction:column;font-family:'Instrument Sans',system-ui">
+<div style="height:64px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid #2b2e35">
+<div style="font-family:'DM Mono',ui-monospace,monospace;font-weight:500;font-size:18px;letter-spacing:.3em;color:#f2f0ec">FIVER</div>
+<div style="display:flex;align-items:center;gap:18px">
+<div style="font-family:'DM Mono',ui-monospace,monospace;font-size:12px;color:#8b8f98;letter-spacing:.1em">842</div>
+<div style="padding:6px 11px;border-radius:999px;background:#2a2d34;font-size:11.5px;color:#d0a54a;letter-spacing:.06em">HARD MODE</div>
+<div style="display:flex;align-items:baseline;gap:6px"><span style="font-size:17px;font-weight:600;color:#f2f0ec">17</span><span style="font-size:11px;color:#8b8f98;letter-spacing:.1em">STREAK</span></div>
+<div style="display:flex;gap:9px">
+<div style="width:32px;height:32px;border:1px solid #2b2e35;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#8b8f98">?</div>
+<div style="width:32px;height:32px;border:1px solid #2b2e35;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#8b8f98">▤</div>
+</div>
+</div>
+</div>
+<div style="flex:1;display:flex;align-items:center;justify-content:center;gap:64px;padding:0 40px">
+<div style="display:flex;flex-direction:column;gap:9px">
+<sc-for list="{{ c.won }}" as="row" hint-placeholder-count="6">
+<div style="display:flex;gap:9px">
+<sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+<div style="width:70px;height:70px;border-radius:10px;border:1.5px solid;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',ui-monospace,monospace;font-size:32px;font-weight:500;background:{{ cell.bg }};color:{{ cell.fg }};border-color:{{ cell.bd }}">{{ cell.ch }}</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+<div style="width:280px;display:flex;flex-direction:column;gap:20px">
+<div style="font-family:'Instrument Serif',serif;font-size:34px;line-height:1.15;color:#f2f0ec">Three guesses.<br>Clean work.</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<sc-for list="{{ c.share }}" as="row" hint-placeholder-count="3">
+<div style="display:flex;gap:4px">
+<sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+<div style="width:22px;height:22px;border-radius:5px;background:{{ cell.bg }}"></div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:9px">
+<div style="flex:1;background:#f2f0ec;color:#15161a;font-size:13px;font-weight:600;padding:11px 0;border-radius:8px;text-align:center">Share</div>
+<div style="flex:1;border:1px solid #2b2e35;color:#c8ccd4;font-size:13px;font-weight:500;padding:11px 0;border-radius:8px;text-align:center">Stats</div>
+</div>
+<div style="font-family:'DM Mono',ui-monospace,monospace;font-size:11.5px;color:#8b8f98;letter-spacing:.05em">NEXT WORD 07:12:44</div>
+</div>
+</div>
+</div>
+</x-import>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#15161a;display:flex;flex-direction:column;font-family:'Instrument Sans',system-ui;padding-top:54px;box-sizing:border-box;position:relative">
+<div style="height:50px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid #2b2e35">
+<div style="width:30px;font-size:14px;color:#8b8f98">?</div>
+<div style="font-family:'DM Mono',ui-monospace,monospace;font-weight:500;font-size:15px;letter-spacing:.28em;color:#f2f0ec">FIVER</div>
+<div style="width:30px;text-align:right;font-size:12px;color:#8b8f98">▤</div>
+</div>
+<div style="flex:1;display:flex;align-items:center;justify-content:center">
+<div style="display:flex;flex-direction:column;gap:7px">
+<sc-for list="{{ c.prog }}" as="row" hint-placeholder-count="6">
+<div style="display:flex;gap:7px">
+<sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+<div style="width:58px;height:58px;border-radius:9px;border:1.5px solid;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',ui-monospace,monospace;font-size:27px;font-weight:500;background:{{ cell.bg }};color:{{ cell.fg }};border-color:{{ cell.bd }}">{{ cell.ch }}</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="flex:none;padding:10px 5px 42px;display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ c.kbProg }}" as="row" hint-placeholder-count="3">
+<div style="display:flex;gap:6px;padding:0 3px">
+<sc-for list="{{ row.keys }}" as="key" hint-placeholder-count="10">
+<div style="height:52px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',ui-monospace,monospace;font-size:15px;font-weight:500;flex-basis:0;flex-grow:{{ key.f }};background:{{ key.bg }};color:{{ key.fg }}">{{ key.ch }}</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+</x-import>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "make <a class="dv-oid" href="#1a">1a</a>'s win overlay a bottom sheet on mobile" · "show the loss and how-to-play screens for <a class="dv-oid" href="#1c">1c</a>" · "make <a class="dv-oid" href="#1b">1b</a> playable"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const PALS = {
+  a: { tileBg: 'transparent', tileBd: '#d7d1c4', ink: '#17181a', ok: '#4a7a5c', mid: '#c2933c', off: '#a8a29a', on: '#ffffff', kb: '#e7e2d8', kbFg: '#17181a' },
+  b: { tileBg: 'transparent', tileBd: '#ded7c9', ink: '#17181a', ok: '#2f6b4f', mid: '#b8862b', off: '#b3aca1', on: '#fffdf8', kb: '#f2ece0', kbFg: '#17181a' },
+  c: { tileBg: 'transparent', tileBd: '#33373f', ink: '#f2f0ec', ok: '#5f9e78', mid: '#d0a54a', off: '#464a53', on: '#121316', kb: '#2a2d34', kbFg: '#e9e7e3' },
+};
+
+const EV = [
+  [['S', 'mid'], ['L', 'off'], ['A', 'off'], ['T', 'off'], ['E', 'off']],
+  [['M', 'mid'], ['I', 'mid'], ['N', 'off'], ['O', 'off'], ['R', 'mid']],
+  [['P', 'ok'], ['R', 'ok'], ['I', 'ok'], ['S', 'ok'], ['M', 'ok']],
+];
+
+const KB_ROWS = [
+  'QWERTYUIOP'.split(''),
+  'ASDFGHJKL'.split(''),
+  ['↵', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '⌫'],
+];
+
+class Component extends DCLogic {
+  cell(p, ch, state) {
+    if (state === 'empty') return { ch: '', bg: p.tileBg, fg: p.ink, bd: p.tileBd };
+    if (state === 'typed') return { ch, bg: p.tileBg, fg: p.ink, bd: p.ink };
+    return { ch, bg: p[state], fg: p.on, bd: p[state] };
+  }
+  row(p, spec) { return { cells: spec.map(s => this.cell(p, s[0], s[1])) }; }
+  empties(p, n) {
+    const out = [];
+    for (let i = 0; i < n; i++) out.push(this.row(p, [0, 1, 2, 3, 4].map(() => ['', 'empty'])));
+    return out;
+  }
+  board(p, mode) {
+    if (mode === 'won') return [this.row(p, EV[0]), this.row(p, EV[1]), this.row(p, EV[2])].concat(this.empties(p, 3));
+    const typing = [['P', 'typed'], ['R', 'typed'], ['I', 'typed'], ['', 'empty'], ['', 'empty']];
+    return [this.row(p, EV[0]), this.row(p, EV[1]), this.row(p, typing)].concat(this.empties(p, 3));
+  }
+  keyboard(p) {
+    const st = { S: 'mid', M: 'mid', I: 'mid', R: 'mid', L: 'off', A: 'off', T: 'off', E: 'off', N: 'off', O: 'off' };
+    return KB_ROWS.map(keys => ({
+      keys: keys.map(ch => {
+        const wide = ch === '↵' || ch === '⌫';
+        const s = st[ch];
+        return {
+          ch, f: wide ? 1.6 : 1,
+          bg: s ? p[s] : p.kb,
+          fg: s ? p.on : p.kbFg,
+        };
+      }),
+    }));
+  }
+  share(p) {
+    return EV.map(spec => ({ cells: spec.map(s => ({ bg: p[s[1]] })) }));
+  }
+  set(k) {
+    const p = PALS[k];
+    return { won: this.board(p, 'won'), prog: this.board(p, 'prog'), kbProg: this.keyboard(p), share: this.share(p) };
+  }
+  renderVals() {
+    return {
+      a: this.set('a'), b: this.set('b'), c: this.set('c'),
+      tabsA: [{ title: 'FIVER — No. 842' }, { title: 'Word list' }],
+      n1160: 1160, n740: 740, yes: true,
+    };
+  }
+}
+</script>
+</body>
+</html>

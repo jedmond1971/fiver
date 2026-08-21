@@ -1,0 +1,62 @@
+/* Design tokens — FIVER, 1a "Paper" direction only.
+   Values are taken verbatim from design_handoff_fiver_word_game/README.md. */
+:root {
+  /* Color */
+  --fiver-bg: #f6f4ef;
+  --fiver-surface: #fffefb;
+  --fiver-ink: #17181a;
+  --fiver-muted: #8a857c;
+  --fiver-border: #ded8cc;
+  --fiver-border-inner: #ece7dd;
+  --fiver-tile-border-empty: #d7d1c4;
+  --fiver-correct: #4a7a5c;
+  --fiver-present: #c2933c;
+  --fiver-absent: #a8a29a;
+  --fiver-on: #ffffff;
+  --fiver-key-unused: #e7e2d8;
+  --fiver-key-text: #17181a;
+  --fiver-scrim: rgba(23, 24, 26, 0.32);
+
+  /* Typography */
+  --fiver-font-sans: 'Instrument Sans', system-ui, sans-serif;
+  --fiver-font-serif: 'Instrument Serif', Georgia, serif;
+
+  /* Spacing (4px base) */
+  --fiver-space-1: 4px;
+  --fiver-space-2: 6px;
+  --fiver-space-3: 7px;
+  --fiver-space-4: 8px;
+  --fiver-space-5: 9px;
+  --fiver-space-6: 10px;
+  --fiver-space-7: 11px;
+  --fiver-space-8: 14px;
+  --fiver-space-9: 18px;
+  --fiver-space-10: 20px;
+  --fiver-space-11: 22px;
+  --fiver-space-12: 26px;
+  --fiver-space-13: 28px;
+  --fiver-space-14: 30px;
+  --fiver-space-15: 36px;
+  --fiver-space-16: 42px;
+  --fiver-space-17: 64px;
+
+  /* Radius */
+  --fiver-radius-tile: 4px;
+  --fiver-radius-key: 6px;
+  --fiver-radius-button: 8px;
+  --fiver-radius-card: 14px;
+  --fiver-radius-pill: 999px;
+
+  /* Shadow */
+  --fiver-shadow-card: 0 24px 60px rgba(23, 24, 26, 0.22);
+
+  /* Sizes */
+  --fiver-header-height-desktop: 66px;
+  --fiver-header-height-mobile: 52px;
+  --fiver-tile-size-desktop: 64px;
+  --fiver-tile-size-mobile: 58px;
+  --fiver-tile-size-narrow: 50px;
+  --fiver-key-height: 52px;
+  --fiver-icon-button-size: 34px;
+  --fiver-win-card-width: 392px;
+}
