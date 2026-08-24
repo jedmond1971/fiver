@@ -1,16 +1,9 @@
+import { EMPTY_STATS } from './stats';
 import type { StoredGame, Stats } from './types';
 
 const STATS_KEY = 'fiver:stats';
 const GAME_KEY = 'fiver:game';
 const HARD_MODE_KEY = 'fiver:hardMode';
-
-const EMPTY_STATS: Stats = {
-  played: 0,
-  wins: 0,
-  currentStreak: 0,
-  maxStreak: 0,
-  distribution: [0, 0, 0, 0, 0, 0],
-};
 
 export function loadStats(): Stats {
   try {

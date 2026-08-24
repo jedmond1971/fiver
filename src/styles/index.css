@@ -150,7 +150,13 @@ button {
   padding: 0;
 }
 
-.fiver-header__glyph-button--right {
+.fiver-header__mobile-group {
+  display: flex;
+  align-items: center;
+  gap: var(--fiver-space-1);
+}
+
+.fiver-header__mobile-group--right {
   justify-content: flex-end;
 }
 
@@ -302,7 +308,9 @@ button {
 }
 
 .fiver-result-card,
-.fiver-help-card {
+.fiver-help-card,
+.fiver-auth-card,
+.fiver-leaderboard-card {
   position: relative;
   background: var(--fiver-surface);
   border: 1px solid var(--fiver-border);
@@ -312,7 +320,9 @@ button {
 }
 
 .fiver-result-card__close,
-.fiver-help-card__close {
+.fiver-help-card__close,
+.fiver-auth-card__close,
+.fiver-leaderboard-card__close {
   position: absolute;
   top: var(--fiver-space-8);
   right: var(--fiver-space-8);
@@ -575,16 +585,282 @@ button {
   transform: translateX(16px);
 }
 
+/* ---------- Account / Auth / Leaderboard ---------- */
+.fiver-icon-button--active {
+  border-color: var(--fiver-ink);
+  color: var(--fiver-ink);
+}
+
+.fiver-header__glyph-button--active {
+  color: var(--fiver-ink);
+}
+
+.fiver-auth-card {
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  padding: var(--fiver-space-14);
+  text-align: left;
+}
+
+.fiver-leaderboard-card {
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  max-height: min(640px, calc(100vh - 64px));
+  overflow-y: auto;
+  padding: var(--fiver-space-14);
+  text-align: left;
+}
+
+.fiver-account-row {
+  display: flex;
+  align-items: center;
+  gap: var(--fiver-space-8);
+  margin: var(--fiver-space-8) 0;
+}
+
+.fiver-account-row__avatar {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--fiver-correct);
+  color: var(--fiver-on);
+  font-family: var(--fiver-font-serif);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fiver-account-row__name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--fiver-ink);
+}
+
+.fiver-tab-group {
+  display: flex;
+  gap: var(--fiver-space-2);
+  background: var(--fiver-key-unused);
+  border-radius: var(--fiver-radius-button);
+  padding: 3px;
+  margin: var(--fiver-space-8) 0;
+}
+
+.fiver-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: var(--fiver-space-3) var(--fiver-space-6);
+  border-radius: calc(var(--fiver-radius-button) - 3px);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--fiver-muted);
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.fiver-tab--active {
+  background: var(--fiver-surface);
+  color: var(--fiver-ink);
+  box-shadow: 0 1px 3px rgba(23, 24, 26, 0.12);
+}
+
+.fiver-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fiver-space-6);
+}
+
+.fiver-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fiver-space-1);
+}
+
+.fiver-field__label {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--fiver-muted);
+}
+
+.fiver-field__input {
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--fiver-ink);
+  background: var(--fiver-bg);
+  border: 1px solid var(--fiver-border);
+  border-radius: var(--fiver-radius-key);
+  padding: var(--fiver-space-6) var(--fiver-space-6);
+}
+
+.fiver-field__input:focus-visible {
+  outline: 2px solid var(--fiver-correct);
+  outline-offset: 1px;
+}
+
+.fiver-form-error {
+  font-size: 12.5px;
+  color: var(--fiver-error);
+}
+
+.fiver-form-info {
+  font-size: 12.5px;
+  color: var(--fiver-muted);
+}
+
+.fiver-share-button--full {
+  width: 100%;
+  text-align: center;
+}
+
+.fiver-share-button--muted {
+  background: var(--fiver-key-unused);
+  color: var(--fiver-ink);
+}
+
+.fiver-oauth-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fiver-space-4);
+  border: 1px solid var(--fiver-border);
+  background: var(--fiver-surface);
+  color: var(--fiver-ink);
+  font-size: 13px;
+  font-weight: 600;
+  padding: var(--fiver-space-6) var(--fiver-space-8);
+  border-radius: var(--fiver-radius-button);
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.fiver-text-button {
+  border: none;
+  background: none;
+  color: var(--fiver-muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--fiver-space-1) var(--fiver-space-2);
+}
+
+.fiver-friend-search {
+  display: flex;
+  gap: var(--fiver-space-4);
+  margin: var(--fiver-space-8) 0;
+}
+
+.fiver-friend-search .fiver-field__input {
+  flex: 1;
+}
+
+.fiver-friend-list {
+  list-style: none;
+  margin: var(--fiver-space-4) 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fiver-space-3);
+}
+
+.fiver-friend-list__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--fiver-ink);
+}
+
+.fiver-friend-list__actions {
+  display: flex;
+  gap: var(--fiver-space-4);
+}
+
+.fiver-friend-list__hint {
+  font-size: 11px;
+  color: var(--fiver-muted);
+}
+
+.fiver-leaderboard-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fiver-space-3);
+  margin-bottom: var(--fiver-space-8);
+}
+
+.fiver-leaderboard-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fiver-space-1);
+}
+
+.fiver-leaderboard-list__row {
+  display: flex;
+  align-items: center;
+  gap: var(--fiver-space-6);
+  padding: var(--fiver-space-4) var(--fiver-space-3);
+  border-radius: var(--fiver-radius-key);
+}
+
+.fiver-leaderboard-list__row--self {
+  background: var(--fiver-bg);
+}
+
+.fiver-leaderboard-list__rank {
+  width: 18px;
+  font-size: 12px;
+  color: var(--fiver-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.fiver-leaderboard-list__name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fiver-ink);
+}
+
+.fiver-leaderboard-list__value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fiver-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.fiver-leaderboard-list__row .fiver-text-button {
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
 /* ---------- Hover (pointer devices only) ---------- */
 @media (hover: hover) and (pointer: fine) {
   .fiver-icon-button:hover,
   .fiver-result-card__close:hover,
-  .fiver-help-card__close:hover {
+  .fiver-help-card__close:hover,
+  .fiver-auth-card__close:hover,
+  .fiver-leaderboard-card__close:hover {
     background: rgba(23, 24, 26, 0.04);
   }
 
   .fiver-share-button:hover {
     background: #3f6b4e;
+  }
+
+  .fiver-oauth-button:hover {
+    background: rgba(23, 24, 26, 0.03);
+  }
+
+  .fiver-text-button:hover {
+    color: var(--fiver-ink);
+  }
+
+  .fiver-leaderboard-list__row:hover .fiver-text-button {
+    opacity: 1;
   }
 }
 
@@ -740,7 +1016,9 @@ button {
   .fiver-tile--revealing.fiver-tile--absent,
   .fiver-tile--bouncing,
   .fiver-result-card,
-  .fiver-help-card {
+  .fiver-help-card,
+  .fiver-auth-card,
+  .fiver-leaderboard-card {
     animation: none !important;
   }
 }

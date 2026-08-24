@@ -26,6 +26,13 @@ export function getPuzzleInfo(now: Date = new Date()): PuzzleInfo {
   return { puzzleNumber, puzzleDate, answer };
 }
 
+/** Inverse of the puzzleNumber calculation in getPuzzleInfo — used for leaderboard date windowing. */
+export function dateFromPuzzleNumber(puzzleNumber: number): Date {
+  const d = new Date(EPOCH);
+  d.setDate(d.getDate() + (puzzleNumber - 1));
+  return d;
+}
+
 export function formatPuzzleDate(date: Date): string {
   return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' })
     .format(date)

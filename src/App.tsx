@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
+import { useAuth } from './auth/useAuth';
+import { AccountModal } from './components/AccountModal';
 import { Board } from './components/Board';
 import { Header } from './components/Header';
 import { HelpModal } from './components/HelpModal';
 import { Keyboard } from './components/Keyboard';
+import { LeaderboardModal } from './components/LeaderboardModal';
 import { ResultModal } from './components/ResultModal';
 import { Toast } from './components/Toast';
+import { UsernameModal } from './components/UsernameModal';
 import { computeKeyboardStates, evaluateGuess } from './game/evaluate';
 import { useFiverGame } from './game/useFiverGame';
 import { useIsMobile } from './hooks/useIsMobile';
@@ -16,9 +20,12 @@ const STATE_ANNOUNCE: Record<'correct' | 'present' | 'absent', string> = {
 };
 
 export default function App() {
-  const game = useFiverGame();
+  const { user, needsUsername } = useAuth();
+  const game = useFiverGame(user?.id ?? null);
   const isMobile = useIsMobile();
   const [announcement, setAnnouncement] = useState('');
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const prevGuessCount = useRef(0);
 
   useEffect(() => {
@@ -40,8 +47,11 @@ export default function App() {
         puzzleDate={game.puzzleDate}
         stats={game.stats}
         isMobile={isMobile}
+        isSignedIn={user !== null}
         onHelp={() => game.setHelpOpen(true)}
         onStats={() => game.setResultOpen(true)}
+        onAccount={() => setAccountOpen(true)}
+        onLeaderboard={() => setLeaderboardOpen(true)}
       />
 
       <main className="fiver-board-area">
@@ -79,6 +89,17 @@ export default function App() {
 
       {game.helpOpen && (
         <HelpModal hardMode={game.hardMode} onToggleHardMode={game.toggleHardMode} onClose={() => game.setHelpOpen(false)} />
+      )}
+
+      {needsUsername && <UsernameModal />}
+
+      {accountOpen && !needsUsername && <AccountModal onClose={() => setAccountOpen(false)} />}
+
+      {leaderboardOpen && (
+        <LeaderboardModal
+          onClose={() => setLeaderboardOpen(false)}
+          onRequestSignIn={() => setAccountOpen(true)}
+        />
       )}
     </div>
   );

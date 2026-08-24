@@ -1,6 +1,8 @@
 import { formatPuzzleDate } from '../game/puzzle';
 import type { Stats } from '../game/types';
+import { AccountIcon } from './icons/AccountIcon';
 import { HelpIcon } from './icons/HelpIcon';
+import { LeaderboardIcon } from './icons/LeaderboardIcon';
 import { StatsIcon } from './icons/StatsIcon';
 
 interface HeaderProps {
@@ -8,28 +10,51 @@ interface HeaderProps {
   puzzleDate: Date;
   stats: Stats;
   isMobile: boolean;
+  isSignedIn: boolean;
   onHelp: () => void;
   onStats: () => void;
+  onAccount: () => void;
+  onLeaderboard: () => void;
 }
 
-export function Header({ puzzleNumber, puzzleDate, stats, isMobile, onHelp, onStats }: HeaderProps) {
+export function Header({
+  puzzleNumber,
+  puzzleDate,
+  stats,
+  isMobile,
+  isSignedIn,
+  onHelp,
+  onStats,
+  onAccount,
+  onLeaderboard,
+}: HeaderProps) {
   const winPct = stats.played > 0 ? Math.round((stats.wins / stats.played) * 100) : 0;
 
   if (isMobile) {
     return (
       <header className="fiver-header fiver-header--mobile">
-        <button type="button" className="fiver-header__glyph-button" onClick={onHelp} aria-label="How to play">
-          <HelpIcon />
-        </button>
+        <div className="fiver-header__mobile-group">
+          <button type="button" className="fiver-header__glyph-button" onClick={onHelp} aria-label="How to play">
+            <HelpIcon />
+          </button>
+          <button type="button" className="fiver-header__glyph-button" onClick={onLeaderboard} aria-label="Friends leaderboard">
+            <LeaderboardIcon />
+          </button>
+        </div>
         <div className="fiver-wordmark fiver-wordmark--mobile">FIVER</div>
-        <button
-          type="button"
-          className="fiver-header__glyph-button fiver-header__glyph-button--right"
-          onClick={onStats}
-          aria-label="Statistics"
-        >
-          <StatsIcon />
-        </button>
+        <div className="fiver-header__mobile-group fiver-header__mobile-group--right">
+          <button type="button" className="fiver-header__glyph-button" onClick={onStats} aria-label="Statistics">
+            <StatsIcon />
+          </button>
+          <button
+            type="button"
+            className={`fiver-header__glyph-button${isSignedIn ? ' fiver-header__glyph-button--active' : ''}`}
+            onClick={onAccount}
+            aria-label="Account"
+          >
+            <AccountIcon />
+          </button>
+        </div>
       </header>
     );
   }
@@ -58,6 +83,17 @@ export function Header({ puzzleNumber, puzzleDate, stats, isMobile, onHelp, onSt
           </button>
           <button type="button" className="fiver-icon-button" onClick={onStats} aria-label="Statistics">
             <StatsIcon />
+          </button>
+          <button type="button" className="fiver-icon-button" onClick={onLeaderboard} aria-label="Friends leaderboard">
+            <LeaderboardIcon />
+          </button>
+          <button
+            type="button"
+            className={`fiver-icon-button${isSignedIn ? ' fiver-icon-button--active' : ''}`}
+            onClick={onAccount}
+            aria-label="Account"
+          >
+            <AccountIcon />
           </button>
         </div>
       </div>

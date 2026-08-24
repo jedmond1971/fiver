@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { checkHardMode } from './hardMode';
 import { getPuzzleInfo, nextLocalMidnight } from './puzzle';
+import { fetchStats, recordGameResult } from './remoteStorage';
 import { buildShareText } from './share';
 import { loadGame, loadHardMode, loadStats, saveGame, saveHardMode, saveStats } from './storage';
+import { applyResultToStats } from './stats';
 import type { GameStatus, Stats } from './types';
 import { isValidGuess } from './wordList';
 
@@ -18,7 +20,7 @@ function rowResultToWin(guess: string, answer: string): boolean {
   return guess === answer;
 }
 
-export function useFiverGame() {
+export function useFiverGame(userId: string | null = null) {
   const [now, setNow] = useState(() => new Date());
   const puzzle = useMemo(() => getPuzzleInfo(now), [now]);
 
@@ -38,6 +40,30 @@ export function useFiverGame() {
   const toastTimer = useRef<number | undefined>(undefined);
   const shareTimer = useRef<number | undefined>(undefined);
   const loadedPuzzleNumber = useRef<number | null>(null);
+
+  // Signed-in Stats live in game_results, not the local `fiver:stats` key —
+  // reload from the server whenever the signed-in user changes (including
+  // sign-out, which falls back to the local guest total).
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (!userId) {
+      setStats(loadStats());
+      return;
+    }
+    let cancelled = false;
+    fetchStats(userId)
+      .then((remote) => {
+        if (!cancelled) setStats(remote);
+      })
+      .catch(() => {
+        // Leave whatever Stats were already showing (e.g. the guest total)
+        // rather than clobbering it with an empty total on a transient error.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Tick every second: drives the countdown and detects local-midnight rollover.
   useEffect(() => {
@@ -97,20 +123,21 @@ export function useFiverGame() {
       setStatus(finalStatus);
       persist({ guesses: finalGuesses, current: '', status: finalStatus });
 
-      setStats((prev) => {
-        const distribution = [...prev.distribution];
-        if (won) distribution[finalGuesses.length - 1] += 1;
-        const currentStreak = won ? prev.currentStreak + 1 : 0;
-        const next: Stats = {
-          played: prev.played + 1,
-          wins: prev.wins + (won ? 1 : 0),
-          currentStreak,
-          maxStreak: Math.max(prev.maxStreak, currentStreak),
-          distribution,
-        };
+      // Computed from the current `stats` closure rather than a setState
+      // updater function: React (Strict Mode especially) may invoke an
+      // updater twice to check purity, which would double-fire the network
+      // call below — a bug the unique (user_id, puzzle_number) constraint
+      // happened to mask, but worth avoiding rather than relying on.
+      const next = applyResultToStats(stats, won, finalGuesses.length);
+      setStats(next);
+      if (userId) {
+        recordGameResult(userId, puzzle.puzzleNumber, won ? finalGuesses.length : null, won, finalGuesses).catch(() => {
+          // Best-effort: the next load re-derives Stats from the server
+          // anyway, so a transient failure here doesn't corrupt state.
+        });
+      } else {
         saveStats(next);
-        return next;
-      });
+      }
 
       const openResult = () => setResultOpen(true);
       if (won) {
@@ -123,7 +150,7 @@ export function useFiverGame() {
         window.setTimeout(openResult, 300);
       }
     },
-    [persist],
+    [persist, puzzle.puzzleNumber, userId, stats],
   );
 
   const submitGuess = useCallback(() => {
