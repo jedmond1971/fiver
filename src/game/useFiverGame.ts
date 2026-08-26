@@ -5,7 +5,7 @@ import { fetchStats, recordGameResult } from './remoteStorage';
 import { buildShareText } from './share';
 import { loadGame, loadHardMode, loadStats, saveGame, saveHardMode, saveStats } from './storage';
 import { applyResultToStats } from './stats';
-import type { GameStatus, Stats } from './types';
+import type { EvaluatedLetter, GameStatus, Stats } from './types';
 import { isValidGuess } from './wordList';
 
 const FLIP_DURATION_MS = 300;
@@ -16,8 +16,22 @@ const BOUNCE_DURATION_MS = 300;
 const ROW_BOUNCE_MS = BOUNCE_STAGGER_MS * 4 + BOUNCE_DURATION_MS;
 const TOAST_MS = 1500;
 
-function rowResultToWin(guess: string, answer: string): boolean {
-  return guess === answer;
+interface GuessApiResponse {
+  evaluation: EvaluatedLetter[];
+  correct: boolean;
+  answer?: string;
+}
+
+async function submitGuessToServer(puzzleNumber: number, guess: string, guessNumber: number): Promise<GuessApiResponse> {
+  const res = await fetch('/api/guess', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ puzzleNumber, guess, guessNumber }),
+  });
+  if (!res.ok) {
+    throw new Error(`Guess request failed: ${res.status}`);
+  }
+  return (await res.json()) as GuessApiResponse;
 }
 
 export function useFiverGame(userId: string | null = null) {
@@ -25,8 +39,11 @@ export function useFiverGame(userId: string | null = null) {
   const puzzle = useMemo(() => getPuzzleInfo(now), [now]);
 
   const [guesses, setGuesses] = useState<string[]>([]);
+  const [evaluations, setEvaluations] = useState<EvaluatedLetter[][]>([]);
+  const [answer, setAnswer] = useState<string | null>(null);
   const [current, setCurrent] = useState('');
   const [status, setStatus] = useState<GameStatus>('playing');
+  const [submitting, setSubmitting] = useState(false);
   const [revealingRow, setRevealingRow] = useState<number | null>(null);
   const [bounceRow, setBounceRow] = useState<number | null>(null);
   const [shakeToken, setShakeToken] = useState(0);
@@ -81,17 +98,31 @@ export function useFiverGame(userId: string | null = null) {
     loadedPuzzleNumber.current = puzzle.puzzleNumber;
 
     const stored = loadGame();
-    if (stored && stored.puzzleNumber === puzzle.puzzleNumber) {
+    // Older saves (from before server-side scoring) won't have evaluations
+    // for their guesses — there's no way to reconstruct those without the
+    // answer, so treat that as no saved game rather than showing a board
+    // with un-scored rows.
+    const usable =
+      stored &&
+      stored.puzzleNumber === puzzle.puzzleNumber &&
+      Array.isArray(stored.evaluations) &&
+      stored.evaluations.length === stored.guesses.length;
+
+    if (usable && stored) {
       setGuesses(stored.guesses);
+      setEvaluations(stored.evaluations);
+      setAnswer(stored.answer);
       setCurrent(stored.current);
       setStatus(stored.status);
       setResultOpen(stored.status !== 'playing');
     } else {
       setGuesses([]);
+      setEvaluations([]);
+      setAnswer(null);
       setCurrent('');
       setStatus('playing');
       setResultOpen(false);
-      saveGame({ puzzleNumber: puzzle.puzzleNumber, guesses: [], current: '', status: 'playing' });
+      saveGame({ puzzleNumber: puzzle.puzzleNumber, guesses: [], evaluations: [], current: '', status: 'playing', answer: null });
     }
     setRevealingRow(null);
     setBounceRow(null);
@@ -99,7 +130,7 @@ export function useFiverGame(userId: string | null = null) {
   /* eslint-enable react-hooks/set-state-in-effect */
 
   const persist = useCallback(
-    (next: { guesses: string[]; current: string; status: GameStatus }) => {
+    (next: { guesses: string[]; evaluations: EvaluatedLetter[][]; current: string; status: GameStatus; answer: string | null }) => {
       saveGame({ puzzleNumber: puzzle.puzzleNumber, ...next });
     },
     [puzzle.puzzleNumber],
@@ -118,10 +149,11 @@ export function useFiverGame(userId: string | null = null) {
   }, []);
 
   const finishGame = useCallback(
-    (finalGuesses: string[], won: boolean) => {
+    (finalGuesses: string[], finalEvaluations: EvaluatedLetter[][], finalAnswer: string, won: boolean) => {
       const finalStatus: GameStatus = won ? 'won' : 'lost';
       setStatus(finalStatus);
-      persist({ guesses: finalGuesses, current: '', status: finalStatus });
+      setAnswer(finalAnswer);
+      persist({ guesses: finalGuesses, evaluations: finalEvaluations, current: '', status: finalStatus, answer: finalAnswer });
 
       // Computed from the current `stats` closure rather than a setState
       // updater function: React (Strict Mode especially) may invoke an
@@ -154,7 +186,7 @@ export function useFiverGame(userId: string | null = null) {
   );
 
   const submitGuess = useCallback(() => {
-    if (status !== 'playing' || revealingRow !== null) return;
+    if (status !== 'playing' || revealingRow !== null || submitting) return;
 
     if (current.length < 5) {
       showToast('Not enough letters');
@@ -170,7 +202,7 @@ export function useFiverGame(userId: string | null = null) {
     }
 
     if (hardMode) {
-      const violation = checkHardMode(word, guesses, puzzle.answer);
+      const violation = checkHardMode(word, evaluations);
       if (violation) {
         showToast(violation);
         triggerShake();
@@ -179,24 +211,35 @@ export function useFiverGame(userId: string | null = null) {
     }
 
     const rowIndex = guesses.length;
-    setRevealingRow(rowIndex);
+    setSubmitting(true);
 
-    window.setTimeout(() => {
-      const nextGuesses = [...guesses, word];
-      setGuesses(nextGuesses);
-      setCurrent('');
-      setRevealingRow(null);
+    submitGuessToServer(puzzle.puzzleNumber, word, rowIndex + 1)
+      .then((response) => {
+        setSubmitting(false);
+        setRevealingRow(rowIndex);
 
-      const won = rowResultToWin(word, puzzle.answer);
-      const lost = !won && nextGuesses.length >= 6;
+        window.setTimeout(() => {
+          const nextGuesses = [...guesses, word];
+          const nextEvaluations = [...evaluations, response.evaluation];
+          setGuesses(nextGuesses);
+          setEvaluations(nextEvaluations);
+          setCurrent('');
+          setRevealingRow(null);
 
-      if (won || lost) {
-        finishGame(nextGuesses, won);
-      } else {
-        persist({ guesses: nextGuesses, current: '', status: 'playing' });
-      }
-    }, ROW_REVEAL_MS);
-  }, [current, guesses, hardMode, persist, puzzle.answer, revealingRow, showToast, status, triggerShake, finishGame]);
+          const lost = !response.correct && nextGuesses.length >= 6;
+
+          if (response.correct || lost) {
+            finishGame(nextGuesses, nextEvaluations, response.answer ?? '', response.correct);
+          } else {
+            persist({ guesses: nextGuesses, evaluations: nextEvaluations, current: '', status: 'playing', answer: null });
+          }
+        }, ROW_REVEAL_MS);
+      })
+      .catch(() => {
+        setSubmitting(false);
+        showToast('Something went wrong — try again');
+      });
+  }, [current, evaluations, finishGame, guesses, hardMode, persist, puzzle.puzzleNumber, revealingRow, showToast, status, submitting, triggerShake]);
 
   const handleKey = useCallback(
     (key: string) => {
@@ -209,7 +252,7 @@ export function useFiverGame(userId: string | null = null) {
       if (key === 'BACKSPACE') {
         setCurrent((c) => {
           const next = c.slice(0, -1);
-          persist({ guesses, current: next, status });
+          persist({ guesses, evaluations, current: next, status, answer });
           return next;
         });
         return;
@@ -217,12 +260,12 @@ export function useFiverGame(userId: string | null = null) {
       if (/^[A-Z]$/.test(key) && current.length < 5) {
         setCurrent((c) => {
           const next = c + key;
-          persist({ guesses, current: next, status });
+          persist({ guesses, evaluations, current: next, status, answer });
           return next;
         });
       }
     },
-    [current.length, guesses, helpOpen, persist, resultOpen, revealingRow, status, submitGuess],
+    [answer, current.length, evaluations, guesses, helpOpen, persist, resultOpen, revealingRow, status, submitGuess],
   );
 
   useEffect(() => {
@@ -251,8 +294,7 @@ export function useFiverGame(userId: string | null = null) {
   const share = useCallback(() => {
     const text = buildShareText({
       puzzleNumber: puzzle.puzzleNumber,
-      guesses,
-      answer: puzzle.answer,
+      evaluations,
       status,
       hardMode,
     });
@@ -261,15 +303,16 @@ export function useFiverGame(userId: string | null = null) {
       window.clearTimeout(shareTimer.current);
       shareTimer.current = window.setTimeout(() => setShareCopied(false), 1500);
     });
-  }, [guesses, hardMode, puzzle.answer, puzzle.puzzleNumber, status]);
+  }, [evaluations, hardMode, puzzle.puzzleNumber, status]);
 
   const countdownMs = Math.max(0, nextLocalMidnight(now).getTime() - now.getTime());
 
   return {
-    answer: puzzle.answer,
+    answer,
     puzzleNumber: puzzle.puzzleNumber,
     puzzleDate: puzzle.puzzleDate,
     guesses,
+    evaluations,
     current,
     status,
     revealingRow,

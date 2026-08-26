@@ -21,14 +21,16 @@ export interface Stats {
 export interface StoredGame {
   puzzleNumber: number;
   guesses: string[];
+  evaluations: EvaluatedLetter[][];
   current: string;
   status: GameStatus;
+  /** Revealed by the server on a win or the 6th guess; null while still playing. */
+  answer: string | null;
 }
 
 export interface PuzzleInfo {
   puzzleNumber: number;
   puzzleDate: Date;
-  answer: string;
 }
 
 /** A signed-in player's account row. */

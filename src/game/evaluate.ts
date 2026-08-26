@@ -1,4 +1,4 @@
-import type { EvaluatedLetter, KeyState, LetterState } from './types';
+import type { EvaluatedLetter, KeyState, LetterState } from './types.ts';
 
 /**
  * Scores a guess against the answer, letter by letter.
@@ -38,10 +38,10 @@ export function evaluateGuess(guess: string, answer: string): EvaluatedLetter[] 
 const STATE_PRIORITY: Record<LetterState, number> = { absent: 0, present: 1, correct: 2 };
 
 /** Best known state per letter across every guess submitted so far, for coloring the keyboard. */
-export function computeKeyboardStates(guesses: string[], answer: string): Record<string, KeyState> {
+export function computeKeyboardStates(evaluations: EvaluatedLetter[][]): Record<string, KeyState> {
   const states: Record<string, KeyState> = {};
-  for (const guess of guesses) {
-    for (const { letter, state } of evaluateGuess(guess, answer)) {
+  for (const evaluation of evaluations) {
+    for (const { letter, state } of evaluation) {
       const current = states[letter];
       if (!current || STATE_PRIORITY[state] > STATE_PRIORITY[current as LetterState]) {
         states[letter] = state;

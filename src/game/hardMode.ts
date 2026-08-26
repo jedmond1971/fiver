@@ -1,4 +1,4 @@
-import { evaluateGuess } from './evaluate';
+import type { EvaluatedLetter } from './types';
 
 function ordinal(n: number): string {
   const suffixes: Record<number, string> = { 1: 'st', 2: 'nd', 3: 'rd' };
@@ -13,14 +13,13 @@ function ordinal(n: number): string {
  *
  * Returns a toast-ready error message, or null if the guess is allowed.
  */
-export function checkHardMode(guess: string, previousGuesses: string[], answer: string): string | null {
-  if (previousGuesses.length === 0) return null;
+export function checkHardMode(guess: string, previousEvaluations: EvaluatedLetter[][]): string | null {
+  if (previousEvaluations.length === 0) return null;
 
   const requiredPositions: (string | null)[] = [null, null, null, null, null];
   const requiredCounts: Record<string, number> = {};
 
-  for (const prev of previousGuesses) {
-    const evaluated = evaluateGuess(prev, answer);
+  for (const evaluated of previousEvaluations) {
     const counts: Record<string, number> = {};
     evaluated.forEach(({ letter, state }, i) => {
       if (state === 'correct') requiredPositions[i] = letter;

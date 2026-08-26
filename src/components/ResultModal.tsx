@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { evaluateGuess } from '../game/evaluate';
 import { formatCountdown } from '../game/formatCountdown';
-import type { GameStatus, Stats } from '../game/types';
+import type { EvaluatedLetter, GameStatus, Stats } from '../game/types';
 import { CloseIcon } from './icons/CloseIcon';
 
 const WIN_HEADLINES = ['Flawless', 'Remarkable', 'Splendid', 'Well played', 'Nicely done', 'Just made it'];
@@ -9,8 +8,8 @@ const LOSS_HEADLINE = 'So it goes';
 
 interface ResultModalProps {
   status: GameStatus;
-  guesses: string[];
-  answer: string;
+  evaluations: EvaluatedLetter[][];
+  answer: string | null;
   stats: Stats;
   countdownMs: number;
   shareCopied: boolean;
@@ -20,7 +19,7 @@ interface ResultModalProps {
 
 export function ResultModal({
   status,
-  guesses,
+  evaluations,
   answer,
   stats,
   countdownMs,
@@ -58,21 +57,23 @@ export function ResultModal({
         {finished ? (
           <>
             {status === 'won' && (
-              <div className="fiver-result-card__eyebrow">SOLVED IN {guesses.length}</div>
+              <div className="fiver-result-card__eyebrow">SOLVED IN {evaluations.length}</div>
             )}
             <div className="fiver-result-card__headline">
-              {status === 'won' ? WIN_HEADLINES[Math.min(guesses.length, 6) - 1] : LOSS_HEADLINE}
+              {status === 'won' ? WIN_HEADLINES[Math.min(evaluations.length, 6) - 1] : LOSS_HEADLINE}
             </div>
-            <div className="fiver-result-card__subline">
-              {status === 'won' ? "Today's word was " : 'The word was '}
-              <span className={`fiver-result-card__word${status === 'lost' ? ' fiver-result-card__word--lost' : ''}`}>
-                {answer}
-              </span>
-            </div>
+            {answer && (
+              <div className="fiver-result-card__subline">
+                {status === 'won' ? "Today's word was " : 'The word was '}
+                <span className={`fiver-result-card__word${status === 'lost' ? ' fiver-result-card__word--lost' : ''}`}>
+                  {answer}
+                </span>
+              </div>
+            )}
             <div className="fiver-result-card__grid" aria-hidden="true">
-              {guesses.map((guess, i) => (
+              {evaluations.map((evaluation, i) => (
                 <div className="fiver-result-card__grid-row" key={i}>
-                  {evaluateGuess(guess, answer).map((letter, j) => (
+                  {evaluation.map((letter, j) => (
                     <div key={j} className={`fiver-result-card__block fiver-result-card__block--${letter.state}`} />
                   ))}
                 </div>

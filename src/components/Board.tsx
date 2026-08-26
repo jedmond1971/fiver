@@ -1,11 +1,11 @@
-import { evaluateGuess } from '../game/evaluate';
+import type { EvaluatedLetter } from '../game/types';
 import type { TileVisualState } from './Tile';
 import { Tile } from './Tile';
 
 interface BoardProps {
   guesses: string[];
+  evaluations: EvaluatedLetter[][];
   current: string;
-  answer: string;
   revealingRow: number | null;
   bounceRow: number | null;
   shakeToken: number;
@@ -18,8 +18,8 @@ const COLS = 5;
 
 export function Board({
   guesses,
+  evaluations,
   current,
-  answer,
   revealingRow,
   bounceRow,
   shakeToken,
@@ -38,12 +38,11 @@ export function Board({
         const isShaking = isCurrent && shakeToken > 0;
 
         let letters: string[];
-        let evaluated: ReturnType<typeof evaluateGuess> | null = null;
+        let evaluated: EvaluatedLetter[] | null = null;
 
         if (isSubmitted) {
-          const guess = guesses[rowIndex];
-          letters = guess.split('');
-          evaluated = evaluateGuess(guess, answer);
+          letters = guesses[rowIndex].split('');
+          evaluated = evaluations[rowIndex] ?? null;
         } else if (isCurrent) {
           letters = current.split('');
         } else {

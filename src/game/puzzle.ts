@@ -1,5 +1,4 @@
 import type { PuzzleInfo } from './types';
-import { ANSWERS } from './wordList';
 
 /** Local midnight the first puzzle (No. 1) is dated. Everything is derived from this client-side. */
 const EPOCH = new Date(2025, 0, 1);
@@ -22,8 +21,7 @@ function daysBetween(a: Date, b: Date): number {
 export function getPuzzleInfo(now: Date = new Date()): PuzzleInfo {
   const puzzleDate = startOfDay(now);
   const puzzleNumber = daysBetween(EPOCH, puzzleDate) + 1;
-  const answer = ANSWERS[((puzzleNumber - 1) % ANSWERS.length + ANSWERS.length) % ANSWERS.length].toUpperCase();
-  return { puzzleNumber, puzzleDate, answer };
+  return { puzzleNumber, puzzleDate };
 }
 
 /** Inverse of the puzzleNumber calculation in getPuzzleInfo — used for leaderboard date windowing. */

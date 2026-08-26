@@ -9,7 +9,7 @@ import { LeaderboardModal } from './components/LeaderboardModal';
 import { ResultModal } from './components/ResultModal';
 import { Toast } from './components/Toast';
 import { UsernameModal } from './components/UsernameModal';
-import { computeKeyboardStates, evaluateGuess } from './game/evaluate';
+import { computeKeyboardStates } from './game/evaluate';
 import { useFiverGame } from './game/useFiverGame';
 import { useIsMobile } from './hooks/useIsMobile';
 
@@ -30,15 +30,14 @@ export default function App() {
 
   useEffect(() => {
     if (game.guesses.length > prevGuessCount.current) {
-      const guess = game.guesses[game.guesses.length - 1];
-      const evaluated = evaluateGuess(guess, game.answer);
+      const evaluated = game.evaluations[game.evaluations.length - 1];
       const text = evaluated.map((l) => `${l.letter} ${STATE_ANNOUNCE[l.state]}`).join(', ');
       setAnnouncement(`Row ${game.guesses.length}: ${text}`);
     }
     prevGuessCount.current = game.guesses.length;
-  }, [game.guesses, game.answer]);
+  }, [game.guesses, game.evaluations]);
 
-  const keyStates = computeKeyboardStates(game.guesses, game.answer);
+  const keyStates = computeKeyboardStates(game.evaluations);
 
   return (
     <div className="fiver-app">
@@ -58,8 +57,8 @@ export default function App() {
         <Toast message={game.toast} />
         <Board
           guesses={game.guesses}
+          evaluations={game.evaluations}
           current={game.current}
-          answer={game.answer}
           revealingRow={game.revealingRow}
           bounceRow={game.bounceRow}
           shakeToken={game.shakeToken}
@@ -77,7 +76,7 @@ export default function App() {
       {game.resultOpen && (
         <ResultModal
           status={game.status}
-          guesses={game.guesses}
+          evaluations={game.evaluations}
           answer={game.answer}
           stats={game.stats}
           countdownMs={game.countdownMs}

@@ -67,7 +67,7 @@ describe('evaluateGuess', () => {
 
 describe('computeKeyboardStates', () => {
   it('keeps the best known state per letter across guesses', () => {
-    const states = computeKeyboardStates(['CRUMB', 'PRISM'], 'PRISM');
+    const states = computeKeyboardStates([evaluateGuess('CRUMB', 'PRISM'), evaluateGuess('PRISM', 'PRISM')]);
     expect(states.R).toBe('correct');
     expect(states.M).toBe('correct');
     expect(states.C).toBe('absent');
@@ -75,7 +75,7 @@ describe('computeKeyboardStates', () => {
   });
 
   it('does not downgrade a letter already known correct', () => {
-    const states = computeKeyboardStates(['SPARE', 'ERASE'], 'ERASE');
+    const states = computeKeyboardStates([evaluateGuess('SPARE', 'ERASE'), evaluateGuess('ERASE', 'ERASE')]);
     expect(states.E).toBe('correct');
   });
 });
