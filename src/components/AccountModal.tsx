@@ -166,6 +166,8 @@ function AuthForm({
         <label className="fiver-field">
           <span className="fiver-field__label">Email</span>
           <input
+            id="fiver-auth-email"
+            name="email"
             className="fiver-field__input"
             type="email"
             autoComplete="email"
@@ -177,6 +179,8 @@ function AuthForm({
         <label className="fiver-field">
           <span className="fiver-field__label">Password</span>
           <input
+            id="fiver-auth-password"
+            name="password"
             className="fiver-field__input"
             type="password"
             autoComplete={mode === 'sign-in' ? 'current-password' : 'new-password'}
