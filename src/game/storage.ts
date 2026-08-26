@@ -4,6 +4,7 @@ import type { StoredGame, Stats } from './types';
 const STATS_KEY = 'fiver:stats';
 const GAME_KEY = 'fiver:game';
 const HARD_MODE_KEY = 'fiver:hardMode';
+const SOUND_KEY = 'fiver:sound';
 
 export function loadStats(): Stats {
   try {
@@ -46,4 +47,13 @@ export function loadHardMode(): boolean {
 
 export function saveHardMode(value: boolean): void {
   localStorage.setItem(HARD_MODE_KEY, String(value));
+}
+
+/** Sound defaults on; only explicit "false" turns it off. */
+export function loadSoundEnabled(): boolean {
+  return localStorage.getItem(SOUND_KEY) !== 'false';
+}
+
+export function saveSoundEnabled(value: boolean): void {
+  localStorage.setItem(SOUND_KEY, String(value));
 }

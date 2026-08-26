@@ -3,7 +3,17 @@ import { checkHardMode } from './hardMode';
 import { getPuzzleInfo, nextLocalMidnight } from './puzzle';
 import { fetchStats, recordGameResult } from './remoteStorage';
 import { buildShareText } from './share';
-import { loadGame, loadHardMode, loadStats, saveGame, saveHardMode, saveStats } from './storage';
+import { sound } from './sound';
+import {
+  loadGame,
+  loadHardMode,
+  loadSoundEnabled,
+  loadStats,
+  saveGame,
+  saveHardMode,
+  saveSoundEnabled,
+  saveStats,
+} from './storage';
 import { applyResultToStats } from './stats';
 import type { EvaluatedLetter, GameStatus, Stats } from './types';
 import { isValidGuess } from './wordList';
@@ -53,6 +63,9 @@ export function useFiverGame(userId: string | null = null) {
   const [helpOpen, setHelpOpen] = useState(false);
   const [hardMode, setHardMode] = useState(() => loadHardMode());
   const [shareCopied, setShareCopied] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(() => loadSoundEnabled());
+  const soundEnabledRef = useRef(soundEnabled);
+  soundEnabledRef.current = soundEnabled;
 
   const toastTimer = useRef<number | undefined>(undefined);
   const shareTimer = useRef<number | undefined>(undefined);
@@ -142,6 +155,10 @@ export function useFiverGame(userId: string | null = null) {
     toastTimer.current = window.setTimeout(() => setToast(null), TOAST_MS);
   }, []);
 
+  const playSound = useCallback((fn: () => void) => {
+    if (soundEnabledRef.current) fn();
+  }, []);
+
   const triggerShake = useCallback(() => {
     // Bumping the token remounts the shaking row (used as its React key),
     // which restarts the CSS shake keyframes even on back-to-back invalid submits.
@@ -154,6 +171,7 @@ export function useFiverGame(userId: string | null = null) {
       setStatus(finalStatus);
       setAnswer(finalAnswer);
       persist({ guesses: finalGuesses, evaluations: finalEvaluations, current: '', status: finalStatus, answer: finalAnswer });
+      playSound(won ? sound.win : sound.lose);
 
       // Computed from the current `stats` closure rather than a setState
       // updater function: React (Strict Mode especially) may invoke an
@@ -182,7 +200,7 @@ export function useFiverGame(userId: string | null = null) {
         window.setTimeout(openResult, 300);
       }
     },
-    [persist, puzzle.puzzleNumber, userId, stats],
+    [persist, playSound, puzzle.puzzleNumber, userId, stats],
   );
 
   const submitGuess = useCallback(() => {
@@ -191,6 +209,7 @@ export function useFiverGame(userId: string | null = null) {
     if (current.length < 5) {
       showToast('Not enough letters');
       triggerShake();
+      playSound(sound.invalid);
       return;
     }
 
@@ -198,6 +217,7 @@ export function useFiverGame(userId: string | null = null) {
     if (!isValidGuess(word)) {
       showToast('Not in word list');
       triggerShake();
+      playSound(sound.invalid);
       return;
     }
 
@@ -206,6 +226,7 @@ export function useFiverGame(userId: string | null = null) {
       if (violation) {
         showToast(violation);
         triggerShake();
+        playSound(sound.invalid);
         return;
       }
     }
@@ -217,6 +238,9 @@ export function useFiverGame(userId: string | null = null) {
       .then((response) => {
         setSubmitting(false);
         setRevealingRow(rowIndex);
+        if (soundEnabledRef.current) {
+          response.evaluation.forEach((l, i) => sound.tileReveal(l.state, i * FLIP_STAGGER_MS));
+        }
 
         window.setTimeout(() => {
           const nextGuesses = [...guesses, word];
@@ -239,7 +263,21 @@ export function useFiverGame(userId: string | null = null) {
         setSubmitting(false);
         showToast('Something went wrong — try again');
       });
-  }, [current, evaluations, finishGame, guesses, hardMode, persist, puzzle.puzzleNumber, revealingRow, showToast, status, submitting, triggerShake]);
+  }, [
+    current,
+    evaluations,
+    finishGame,
+    guesses,
+    hardMode,
+    persist,
+    playSound,
+    puzzle.puzzleNumber,
+    revealingRow,
+    showToast,
+    status,
+    submitting,
+    triggerShake,
+  ]);
 
   const handleKey = useCallback(
     (key: string) => {
@@ -255,6 +293,7 @@ export function useFiverGame(userId: string | null = null) {
           persist({ guesses, evaluations, current: next, status, answer });
           return next;
         });
+        playSound(sound.backspace);
         return;
       }
       if (/^[A-Z]$/.test(key) && current.length < 5) {
@@ -263,9 +302,10 @@ export function useFiverGame(userId: string | null = null) {
           persist({ guesses, evaluations, current: next, status, answer });
           return next;
         });
+        playSound(sound.key);
       }
     },
-    [answer, current.length, evaluations, guesses, helpOpen, persist, resultOpen, revealingRow, status, submitGuess],
+    [answer, current.length, evaluations, guesses, helpOpen, persist, playSound, resultOpen, revealingRow, status, submitGuess],
   );
 
   useEffect(() => {
@@ -287,6 +327,14 @@ export function useFiverGame(userId: string | null = null) {
     setHardMode((prev) => {
       const next = !prev;
       saveHardMode(next);
+      return next;
+    });
+  }, []);
+
+  const toggleSound = useCallback(() => {
+    setSoundEnabled((prev) => {
+      const next = !prev;
+      saveSoundEnabled(next);
       return next;
     });
   }, []);
@@ -323,12 +371,14 @@ export function useFiverGame(userId: string | null = null) {
     resultOpen,
     helpOpen,
     hardMode,
+    soundEnabled,
     shareCopied,
     countdownMs,
     handleKey,
     setResultOpen,
     setHelpOpen,
     toggleHardMode,
+    toggleSound,
     share,
     flipStaggerMs: FLIP_STAGGER_MS,
     bounceStaggerMs: BOUNCE_STAGGER_MS,

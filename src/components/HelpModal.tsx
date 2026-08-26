@@ -4,10 +4,12 @@ import { CloseIcon } from './icons/CloseIcon';
 interface HelpModalProps {
   hardMode: boolean;
   onToggleHardMode: () => void;
+  soundEnabled: boolean;
+  onToggleSound: () => void;
   onClose: () => void;
 }
 
-export function HelpModal({ hardMode, onToggleHardMode, onClose }: HelpModalProps) {
+export function HelpModal({ hardMode, onToggleHardMode, soundEnabled, onToggleSound, onClose }: HelpModalProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -68,6 +70,22 @@ export function HelpModal({ hardMode, onToggleHardMode, onClose }: HelpModalProp
             aria-checked={hardMode}
             className={`fiver-switch${hardMode ? ' fiver-switch--on' : ''}`}
             onClick={onToggleHardMode}
+          >
+            <span className="fiver-switch__thumb" />
+          </button>
+        </div>
+
+        <div className="fiver-help-card__setting">
+          <div>
+            <div className="fiver-help-card__setting-title">Sound</div>
+            <div className="fiver-help-card__setting-desc">Play sounds for key presses, guesses, and results.</div>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={soundEnabled}
+            className={`fiver-switch${soundEnabled ? ' fiver-switch--on' : ''}`}
+            onClick={onToggleSound}
           >
             <span className="fiver-switch__thumb" />
           </button>

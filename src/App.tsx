@@ -87,7 +87,13 @@ export default function App() {
       )}
 
       {game.helpOpen && (
-        <HelpModal hardMode={game.hardMode} onToggleHardMode={game.toggleHardMode} onClose={() => game.setHelpOpen(false)} />
+        <HelpModal
+          hardMode={game.hardMode}
+          onToggleHardMode={game.toggleHardMode}
+          soundEnabled={game.soundEnabled}
+          onToggleSound={game.toggleSound}
+          onClose={() => game.setHelpOpen(false)}
+        />
       )}
 
       {needsUsername && <UsernameModal />}
