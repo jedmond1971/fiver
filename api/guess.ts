@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { handleGuess } from './_lib/guessHandler';
+import { handleGuess } from './_lib/guessHandler.js';
 
 type VercelLikeRequest = IncomingMessage & { method?: string; body?: unknown };
 

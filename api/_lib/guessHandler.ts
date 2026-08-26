@@ -1,7 +1,7 @@
-import { evaluateGuess } from '../../src/game/evaluate.ts';
-import type { EvaluatedLetter } from '../../src/game/types.ts';
-import { isValidGuess } from '../../src/game/wordList.ts';
-import { answerForPuzzleNumber } from './answers.ts';
+import { evaluateGuess } from '../../src/game/evaluate.js';
+import type { EvaluatedLetter } from '../../src/game/types.js';
+import { isValidGuess } from '../../src/game/wordList.js';
+import { answerForPuzzleNumber } from './answers.js';
 
 export interface GuessRequestBody {
   puzzleNumber: number;

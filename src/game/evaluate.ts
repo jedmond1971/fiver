@@ -1,4 +1,4 @@
-import type { EvaluatedLetter, KeyState, LetterState } from './types.ts';
+import type { EvaluatedLetter, KeyState, LetterState } from './types.js';
 
 /**
  * Scores a guess against the answer, letter by letter.

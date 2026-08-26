@@ -1,6 +1,6 @@
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
-import { handleGuess } from './api/_lib/guessHandler.ts'
+import { handleGuess } from './api/_lib/guessHandler.js'
 
 // Mirrors api/guess.ts (the real Vercel Function used in production) so
 // `npm run dev` can score guesses locally without needing `vercel dev`.
