@@ -558,6 +558,85 @@ button {
   align-self: center;
 }
 
+.fiver-welcome-tiles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fiver-welcome-tile {
+  position: absolute;
+  bottom: -15%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-family: var(--fiver-font-sans);
+  font-weight: 700;
+  color: #fff;
+  opacity: 0;
+  animation-name: fiverWelcomeTileFloat;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.fiver-welcome-tile--correct {
+  background: var(--fiver-correct);
+}
+
+.fiver-welcome-tile--present {
+  background: var(--fiver-present);
+}
+
+.fiver-welcome-tile--absent {
+  background: var(--fiver-absent);
+}
+
+.fiver-welcome-tile--reverse {
+  animation-name: fiverWelcomeTileFloatReverse;
+}
+
+@keyframes fiverWelcomeTileFloat {
+  0% {
+    transform: translateY(0) rotate(-6deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.55;
+  }
+  88% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-125vh) rotate(10deg);
+    opacity: 0;
+  }
+}
+
+@keyframes fiverWelcomeTileFloatReverse {
+  0% {
+    transform: translateY(0) rotate(6deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.55;
+  }
+  88% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-125vh) rotate(-10deg);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fiver-welcome-tiles {
+    display: none;
+  }
+}
+
 .fiver-help-card__setting {
   display: flex;
   align-items: center;

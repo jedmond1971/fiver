@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { WelcomeTiles } from './WelcomeTiles';
 
 interface WelcomeModalProps {
   /** Signed-in username, if the visitor already has a valid session. */
@@ -38,6 +39,7 @@ export function WelcomeModal({ username, onSignIn, onSignUp, onContinue }: Welco
 
   return (
     <div className="fiver-scrim" onClick={handleContinue}>
+      <WelcomeTiles />
       <div
         className="fiver-help-card fiver-welcome-card"
         role="dialog"
