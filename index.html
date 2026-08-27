@@ -7,6 +7,10 @@
     <meta name="theme-color" content="#f6f4ef" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Starts fetching the welcome-screen theme music as early as possible (before the JS
+         bundle even parses), so it has the best chance of being buffered enough to play
+         audibly by the time the visitor's first tap unlocks autoplay. -->
+    <link rel="preload" as="audio" href="/theme-music.mp3" />
     <link
       href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap"
       rel="stylesheet"

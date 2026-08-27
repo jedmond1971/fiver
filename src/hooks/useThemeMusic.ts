@@ -28,6 +28,7 @@ export function useThemeMusic(active: boolean, enabled: boolean): void {
       const audio = new Audio(THEME_MUSIC_SRC);
       audio.loop = true;
       audio.volume = THEME_MUSIC_VOLUME;
+      audio.preload = 'auto';
       audioRef.current = audio;
     }
     const audio = audioRef.current;
