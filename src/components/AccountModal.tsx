@@ -6,11 +6,13 @@ import { GoogleIcon } from './icons/GoogleIcon';
 interface AccountModalProps {
   onClose: () => void;
   initialMode?: Mode;
+  /** Called once a sign-in or sign-up submission succeeds (even if email confirmation is still pending). */
+  onAuthenticated?: () => void;
 }
 
 type Mode = 'sign-in' | 'sign-up';
 
-export function AccountModal({ onClose, initialMode = 'sign-in' }: AccountModalProps) {
+export function AccountModal({ onClose, initialMode = 'sign-in', onAuthenticated }: AccountModalProps) {
   const { user, profile, authAvailable, signInWithPassword, signUpWithPassword, signInWithGoogle, signOut } = useAuth();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -52,6 +54,7 @@ export function AccountModal({ onClose, initialMode = 'sign-in' }: AccountModalP
             onSignInWithPassword={signInWithPassword}
             onSignUpWithPassword={signUpWithPassword}
             onSignInWithGoogle={signInWithGoogle}
+            onAuthenticated={onAuthenticated}
           />
         )}
       </div>
@@ -108,11 +111,13 @@ function AuthForm({
   onSignInWithPassword,
   onSignUpWithPassword,
   onSignInWithGoogle,
+  onAuthenticated,
 }: {
   initialMode: Mode;
   onSignInWithPassword: (email: string, password: string) => Promise<{ error: string | null }>;
   onSignUpWithPassword: (email: string, password: string) => Promise<{ error: string | null; needsEmailConfirmation?: boolean }>;
   onSignInWithGoogle: () => Promise<{ error: string | null }>;
+  onAuthenticated?: () => void;
 }) {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [email, setEmail] = useState('');
@@ -132,6 +137,7 @@ function AuthForm({
       setError(result.error);
       return;
     }
+    onAuthenticated?.();
     if ('needsEmailConfirmation' in result && result.needsEmailConfirmation) {
       setInfo('Check your email to confirm your account, then sign in.');
     }
@@ -215,7 +221,11 @@ function AuthForm({
         onClick={async () => {
           setError(null);
           const result = await onSignInWithGoogle();
-          if (result.error) setError(result.error);
+          if (result.error) {
+            setError(result.error);
+          } else {
+            onAuthenticated?.();
+          }
         }}
       >
         <GoogleIcon />

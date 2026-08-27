@@ -22,17 +22,28 @@ const STATE_ANNOUNCE: Record<'correct' | 'present' | 'absent', string> = {
 };
 
 export default function App() {
-  const { user, needsUsername, ready, authAvailable } = useAuth();
+  const { user, profile, needsUsername, ready, authAvailable } = useAuth();
   const [welcomeOpen, setWelcomeOpen] = useState(true);
+  // Stays true across the welcome screen and any sign-in/sign-up attempt launched
+  // from it, so the theme music and board-input block only lift once that flow is
+  // actually resolved (authenticated, or explicitly abandoned) — not the instant
+  // the welcome card itself is replaced by the account form.
+  const [introActive, setIntroActive] = useState(true);
   const [accountModalMode, setAccountModalMode] = useState<'sign-in' | 'sign-up'>('sign-in');
-  const showWelcome = welcomeOpen && ready && authAvailable && user === null && !needsUsername;
-  const game = useFiverGame(user?.id ?? null, showWelcome);
-  const isMobile = useIsMobile();
-  useThemeMusic(showWelcome, game.soundEnabled);
-  const [announcement, setAnnouncement] = useState('');
   const [accountOpen, setAccountOpen] = useState(false);
   const [leaderboardOpen, setLeaderboardOpen] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
   const prevGuessCount = useRef(0);
+
+  // When signed in, hold off until the profile (for the greeting name) has loaded
+  // rather than flashing the signed-out variant first.
+  const showWelcome = welcomeOpen && ready && authAvailable && !needsUsername && (user === null || profile !== null);
+  const boardBlocked = showWelcome || (introActive && accountOpen);
+  const game = useFiverGame(user?.id ?? null, boardBlocked);
+  const isMobile = useIsMobile();
+  useThemeMusic(introActive && ready && authAvailable, game.soundEnabled);
+
+  const endIntro = () => setIntroActive(false);
 
   useEffect(() => {
     if (game.guesses.length > prevGuessCount.current) {
@@ -108,11 +119,19 @@ export default function App() {
       {needsUsername && <UsernameModal />}
 
       {accountOpen && !needsUsername && (
-        <AccountModal initialMode={accountModalMode} onClose={() => setAccountOpen(false)} />
+        <AccountModal
+          initialMode={accountModalMode}
+          onClose={() => {
+            setAccountOpen(false);
+            endIntro();
+          }}
+          onAuthenticated={endIntro}
+        />
       )}
 
       {showWelcome && (
         <WelcomeModal
+          username={profile ? profile.username : null}
           onSignIn={() => {
             setAccountModalMode('sign-in');
             setAccountOpen(true);
@@ -123,7 +142,10 @@ export default function App() {
             setAccountOpen(true);
             setWelcomeOpen(false);
           }}
-          onPlayAsGuest={() => setWelcomeOpen(false)}
+          onContinue={() => {
+            setWelcomeOpen(false);
+            endIntro();
+          }}
         />
       )}
 
