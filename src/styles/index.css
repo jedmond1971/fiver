@@ -533,6 +533,31 @@ button {
   margin: var(--fiver-space-8) 0;
 }
 
+/* ---------- Welcome modal ---------- */
+.fiver-welcome-card {
+  text-align: center;
+}
+
+.fiver-welcome-card__wordmark {
+  font-size: 30px;
+  margin-bottom: var(--fiver-space-8);
+}
+
+.fiver-welcome-card .fiver-help-card__text {
+  text-align: left;
+}
+
+.fiver-welcome-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fiver-space-6);
+  margin-top: var(--fiver-space-10);
+}
+
+.fiver-welcome-card__guest {
+  align-self: center;
+}
+
 .fiver-help-card__setting {
   display: flex;
   align-items: center;

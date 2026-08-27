@@ -5,11 +5,12 @@ import { GoogleIcon } from './icons/GoogleIcon';
 
 interface AccountModalProps {
   onClose: () => void;
+  initialMode?: Mode;
 }
 
 type Mode = 'sign-in' | 'sign-up';
 
-export function AccountModal({ onClose }: AccountModalProps) {
+export function AccountModal({ onClose, initialMode = 'sign-in' }: AccountModalProps) {
   const { user, profile, authAvailable, signInWithPassword, signUpWithPassword, signInWithGoogle, signOut } = useAuth();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -46,7 +47,12 @@ export function AccountModal({ onClose }: AccountModalProps) {
         ) : user && profile ? (
           <SignedInView username={profile.username} legacyPlayed={profile.legacyStats?.played ?? 0} onSignOut={signOut} onClose={onClose} />
         ) : (
-          <AuthForm onSignInWithPassword={signInWithPassword} onSignUpWithPassword={signUpWithPassword} onSignInWithGoogle={signInWithGoogle} />
+          <AuthForm
+            initialMode={initialMode}
+            onSignInWithPassword={signInWithPassword}
+            onSignUpWithPassword={signUpWithPassword}
+            onSignInWithGoogle={signInWithGoogle}
+          />
         )}
       </div>
     </div>
@@ -98,15 +104,17 @@ function SignedInView({
 }
 
 function AuthForm({
+  initialMode,
   onSignInWithPassword,
   onSignUpWithPassword,
   onSignInWithGoogle,
 }: {
+  initialMode: Mode;
   onSignInWithPassword: (email: string, password: string) => Promise<{ error: string | null }>;
   onSignUpWithPassword: (email: string, password: string) => Promise<{ error: string | null; needsEmailConfirmation?: boolean }>;
   onSignInWithGoogle: () => Promise<{ error: string | null }>;
 }) {
-  const [mode, setMode] = useState<Mode>('sign-in');
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);

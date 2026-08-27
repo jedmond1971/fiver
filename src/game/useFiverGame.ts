@@ -44,7 +44,7 @@ async function submitGuessToServer(puzzleNumber: number, guess: string, guessNum
   return (await res.json()) as GuessApiResponse;
 }
 
-export function useFiverGame(userId: string | null = null) {
+export function useFiverGame(userId: string | null = null, blocked = false) {
   const [now, setNow] = useState(() => new Date());
   const puzzle = useMemo(() => getPuzzleInfo(now), [now]);
 
@@ -281,7 +281,7 @@ export function useFiverGame(userId: string | null = null) {
 
   const handleKey = useCallback(
     (key: string) => {
-      if (status !== 'playing' || revealingRow !== null || helpOpen || resultOpen) return;
+      if (status !== 'playing' || revealingRow !== null || helpOpen || resultOpen || blocked) return;
 
       if (key === 'ENTER') {
         submitGuess();
@@ -305,7 +305,7 @@ export function useFiverGame(userId: string | null = null) {
         playSound(sound.key);
       }
     },
-    [answer, current.length, evaluations, guesses, helpOpen, persist, playSound, resultOpen, revealingRow, status, submitGuess],
+    [answer, blocked, current.length, evaluations, guesses, helpOpen, persist, playSound, resultOpen, revealingRow, status, submitGuess],
   );
 
   useEffect(() => {

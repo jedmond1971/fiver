@@ -9,6 +9,7 @@ import { LeaderboardModal } from './components/LeaderboardModal';
 import { ResultModal } from './components/ResultModal';
 import { Toast } from './components/Toast';
 import { UsernameModal } from './components/UsernameModal';
+import { WelcomeModal } from './components/WelcomeModal';
 import { computeKeyboardStates } from './game/evaluate';
 import { useFiverGame } from './game/useFiverGame';
 import { useIsMobile } from './hooks/useIsMobile';
@@ -20,8 +21,11 @@ const STATE_ANNOUNCE: Record<'correct' | 'present' | 'absent', string> = {
 };
 
 export default function App() {
-  const { user, needsUsername } = useAuth();
-  const game = useFiverGame(user?.id ?? null);
+  const { user, needsUsername, ready, authAvailable } = useAuth();
+  const [welcomeOpen, setWelcomeOpen] = useState(true);
+  const [accountModalMode, setAccountModalMode] = useState<'sign-in' | 'sign-up'>('sign-in');
+  const showWelcome = welcomeOpen && ready && authAvailable && user === null && !needsUsername;
+  const game = useFiverGame(user?.id ?? null, showWelcome);
   const isMobile = useIsMobile();
   const [announcement, setAnnouncement] = useState('');
   const [accountOpen, setAccountOpen] = useState(false);
@@ -49,7 +53,10 @@ export default function App() {
         isSignedIn={user !== null}
         onHelp={() => game.setHelpOpen(true)}
         onStats={() => game.setResultOpen(true)}
-        onAccount={() => setAccountOpen(true)}
+        onAccount={() => {
+          setAccountModalMode('sign-in');
+          setAccountOpen(true);
+        }}
         onLeaderboard={() => setLeaderboardOpen(true)}
       />
 
@@ -98,7 +105,25 @@ export default function App() {
 
       {needsUsername && <UsernameModal />}
 
-      {accountOpen && !needsUsername && <AccountModal onClose={() => setAccountOpen(false)} />}
+      {accountOpen && !needsUsername && (
+        <AccountModal initialMode={accountModalMode} onClose={() => setAccountOpen(false)} />
+      )}
+
+      {showWelcome && (
+        <WelcomeModal
+          onSignIn={() => {
+            setAccountModalMode('sign-in');
+            setAccountOpen(true);
+            setWelcomeOpen(false);
+          }}
+          onSignUp={() => {
+            setAccountModalMode('sign-up');
+            setAccountOpen(true);
+            setWelcomeOpen(false);
+          }}
+          onPlayAsGuest={() => setWelcomeOpen(false)}
+        />
+      )}
 
       {leaderboardOpen && (
         <LeaderboardModal
