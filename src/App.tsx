@@ -13,6 +13,7 @@ import { WelcomeModal } from './components/WelcomeModal';
 import { computeKeyboardStates } from './game/evaluate';
 import { useFiverGame } from './game/useFiverGame';
 import { useIsMobile } from './hooks/useIsMobile';
+import { useThemeMusic } from './hooks/useThemeMusic';
 
 const STATE_ANNOUNCE: Record<'correct' | 'present' | 'absent', string> = {
   correct: 'correct',
@@ -27,6 +28,7 @@ export default function App() {
   const showWelcome = welcomeOpen && ready && authAvailable && user === null && !needsUsername;
   const game = useFiverGame(user?.id ?? null, showWelcome);
   const isMobile = useIsMobile();
+  useThemeMusic(showWelcome, game.soundEnabled);
   const [announcement, setAnnouncement] = useState('');
   const [accountOpen, setAccountOpen] = useState(false);
   const [leaderboardOpen, setLeaderboardOpen] = useState(false);
