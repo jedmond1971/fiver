@@ -311,6 +311,8 @@ export function useFiverGame(userId: string | null = null) {
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const target = e.target as HTMLElement | null;
+      if (target?.closest('input, textarea, select, [contenteditable="true"]')) return;
       if (e.key === 'Enter') {
         handleKey('ENTER');
       } else if (e.key === 'Backspace') {
