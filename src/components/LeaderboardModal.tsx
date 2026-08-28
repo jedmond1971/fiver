@@ -34,6 +34,9 @@ export function LeaderboardModal({ onClose, onRequestSignIn }: LeaderboardModalP
 
   useEffect(() => {
     closeButtonRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
