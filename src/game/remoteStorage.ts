@@ -133,6 +133,25 @@ export async function searchProfiles(query: string): Promise<ProfileSearchRow[]>
   return data as ProfileSearchRow[];
 }
 
+export type InviteErrorCode = 'invalid_email' | 'unauthorized' | 'already_registered' | 'rate_limited' | 'unknown';
+
+export type InviteFriendResult = { ok: true } | { ok: false; error: InviteErrorCode };
+
+/** Invites someone who doesn't yet have a FIVER account, via Supabase's built-in invite email. */
+export async function inviteFriend(email: string): Promise<InviteFriendResult> {
+  const client = requireClient();
+  const { data } = await client.auth.getSession();
+  const token = data.session?.access_token;
+  if (!token) return { ok: false, error: 'unauthorized' };
+
+  const res = await fetch('/api/invite', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ email }),
+  });
+  return (await res.json()) as InviteFriendResult;
+}
+
 interface FriendshipRow {
   id: string;
   requester_id: string;
