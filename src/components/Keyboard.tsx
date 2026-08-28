@@ -11,7 +11,7 @@ const ROWS = [
   ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'BACKSPACE'],
 ];
 
-const KEY_LABEL: Record<string, string> = { ENTER: '↵', BACKSPACE: '⌫' };
+const KEY_LABEL: Record<string, string> = { ENTER: 'Submit', BACKSPACE: '⌫' };
 
 export function Keyboard({ keyStates, onKey }: KeyboardProps) {
   return (
@@ -23,7 +23,8 @@ export function Keyboard({ keyStates, onKey }: KeyboardProps) {
             const state = keyStates[key];
             const classes = ['fiver-key'];
             if (isWide) classes.push('fiver-key--wide');
-            classes.push(state ? `fiver-key--${state}` : 'fiver-key--unused');
+            if (key === 'ENTER') classes.push('fiver-key--submit');
+            else classes.push(state ? `fiver-key--${state}` : 'fiver-key--unused');
 
             return (
               <button

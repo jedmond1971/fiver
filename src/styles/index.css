@@ -295,6 +295,12 @@ button {
   color: var(--fiver-on);
 }
 
+.fiver-key--submit {
+  background: var(--fiver-correct);
+  color: var(--fiver-on);
+  font-size: 13px;
+}
+
 /* ---------- Scrim & shared card chrome ---------- */
 .fiver-scrim {
   position: fixed;
