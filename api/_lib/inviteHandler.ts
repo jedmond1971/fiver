@@ -60,5 +60,11 @@ export async function handleInvite(body: unknown, authHeader: string | undefined
   if (error.code === 'over_email_send_rate_limit') {
     return { status: 429, body: { ok: false, error: 'rate_limited' } };
   }
+  if (error.code === 'email_address_invalid') {
+    return { status: 400, body: { ok: false, error: 'invalid_email' } };
+  }
+  // Anything else is unexpected — log it server-side (visible in Vercel's
+  // function logs in production) since the client only ever sees 'unknown'.
+  console.error('inviteUserByEmail failed', error);
   return { status: 500, body: { ok: false, error: 'unknown' } };
 }
