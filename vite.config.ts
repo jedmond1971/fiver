@@ -1,4 +1,4 @@
-import { defineConfig, type Plugin } from 'vite'
+import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { handleGuess } from './api/_lib/guessHandler.js'
 import { handleInvite } from './api/_lib/inviteHandler.js'
@@ -70,6 +70,19 @@ function apiDevMiddleware(): Plugin {
 }
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [react(), apiDevMiddleware()],
+export default defineConfig(({ mode }) => {
+  // Vite only exposes VITE_-prefixed vars to import.meta.env (client code);
+  // it never populates process.env for arbitrary .env vars. The api dev
+  // middleware above runs as plain Node code in this same process and reads
+  // process.env directly (matching how Vercel injects dashboard env vars in
+  // production), so the non-VITE_ server-side vars need to be copied over
+  // explicitly for `npm run dev` to exercise /api/invite locally.
+  const env = loadEnv(mode, process.cwd(), '');
+  for (const key of ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY']) {
+    if (env[key] && !process.env[key]) process.env[key] = env[key];
+  }
+
+  return {
+    plugins: [react(), apiDevMiddleware()],
+  };
 })
